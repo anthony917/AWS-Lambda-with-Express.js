@@ -26,7 +26,7 @@ npm start
 ### Deploy in AWS manually
 
 - Create Lambda function
-- Move node_modules folder into nodejs folder, zip it and setup the layer
+- Move node_modules folder into nodejs folder, zip it and setup the **Layer**
 - Upload codes to the Lambda function
 - Create API in API Gateway
 - Create Method "ANY" and asign to Lambda function
