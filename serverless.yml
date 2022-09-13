@@ -1,16 +1,15 @@
-service: AWSLambdaExpress #Name of your App
+service: express-lambda
+frameworkVersion: "3"
+
+plugins:
+  - serverless-offline
 
 provider:
- name: aws
- runtime: nodejs12.x # Node JS version
- #memorySize: 512
- #timeout: 15
- stage: dev
- region: ap-southeast-1 # AWS region
+  name: aws
+  runtime: nodejs14.x
 
 functions:
- api:
-   handler: lambda.handler
-   events:
-     - http: ANY {proxy+}
-     - http: ANY /
+  api:
+    handler: server.init
+    events:
+      - httpApi: "*"

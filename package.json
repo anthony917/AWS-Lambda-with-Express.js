@@ -1,18 +1,12 @@
 {
-  "name": "AWS_Lambda_with_Express",
+  "name": "express-lambda",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node local.js",
-    "deploy": "serverless deploy"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "aws-serverless-express": "^3.3.6",
-    "express": "^4.17.1"
+    "express": "^4.18.1",
+    "serverless-http": "^3.0.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "serverless-offline": "^10.0.2"
+  }
 }

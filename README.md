@@ -1,57 +1,106 @@
-# AWS Lambda with Express.js
+<!--
+title: 'Serverless Framework Node Express API on AWS'
+description: 'This template demonstrates how to develop and deploy a simple Node Express API running on AWS Lambda using the traditional Serverless Framework.'
+layout: Doc
+framework: v3
+platform: AWS
+language: nodeJS
+priority: 1
+authorLink: 'https://github.com/serverless'
+authorName: 'Serverless, inc.'
+authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
+-->
 
-This is a boiler plate code to deploy Express.js in AWS Lambda. Using this you can built Express APIs in your local machine and deploy them in AWS lambda.
+# Serverless Framework Node Express API on AWS
 
-Run and test the application on localhost
+This template demonstrates how to develop and deploy a simple Node Express API service running on AWS Lambda using the traditional Serverless Framework.
+
+## Anatomy of the template
+
+This template configures a single function, `api`, which is responsible for handling all incoming requests thanks to the `httpApi` event. To learn more about `httpApi` event configuration options, please refer to [httpApi event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api/). As the event is configured in a way to accept all incoming requests, `express` framework is responsible for routing and handling requests internally. Implementation takes advantage of `serverless-http` package, which allows you to wrap existing `express` applications. To learn more about `serverless-http`, please refer to corresponding [GitHub repository](https://github.com/dougmoscrop/serverless-http).
+
+## Usage
+
+### Deployment
+
+Install dependencies with:
 
 ```
 npm install
-npm start
 ```
 
-## File structure
-
-- lambda.js - File which is called by AWS lambda
-- local.js - Run the app on localhost
-- src/app.js - App entry point
-- serverless.yml - Lambda function configration
-
-## How to use
-
-- Both the lambda.js and local.js calls the express **app** in the src/app.js
-- Write your business logic (Express API) inside the **src** folder
-- npm start runs the local.js file to test the app in your local machine
-- serverless.yml file contains your details about your AWS region and name of your Lambda function, they are self-explanatory edit them to your needs
-
-### Deploy in AWS manually
-
-- Create Lambda function
-- Move node_modules folder into nodejs folder, zip it and setup the **Layer**
-- Upload codes to the Lambda function
-- Create API in API Gateway
-- Create Method "ANY" and asign to Lambda function
-- Create Resource "ANY" with "proxy resource" and asign to Lambda function
-- Deploy API
-
-### Deploy in AWS using serverless
-
-- An AWS account
-- AWS CLI installed in your machine
-
-### AWS Configrations
-
-Download and install AWS CLI. After installing run the following command in the terminal to configure your AWS account.
+and then deploy with:
 
 ```
-aws configure
+serverless deploy
 ```
 
-it will ask for Access Key and Secret key, you can find them in your AWS online console.
+After running deploy, you should see output similar to:
 
-## Deployment
+```bash
+Deploying aws-node-express-api-project to stage dev (us-east-1)
 
-Run the following command to deploy the app as AWS Lambda function
+✔ Service deployed to stack aws-node-express-api-project-dev (196s)
+
+endpoint: ANY - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com
+functions:
+  api: aws-node-express-api-project-dev-api (766 kB)
+```
+
+_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [`httpApi` event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api/).
+
+### Invocation
+
+After successful deployment, you can call the created application via HTTP:
+
+```bash
+curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
+```
+
+Which should result in the following response:
 
 ```
-npm run deploy
+{"message":"Hello from root!"}
 ```
+
+Calling the `/hello` path with:
+
+```bash
+curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/hello
+```
+
+Should result in the following response:
+
+```bash
+{"message":"Hello from path!"}
+```
+
+If you try to invoke a path or method that does not have a configured handler, e.g. with:
+
+```bash
+curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/nonexistent
+```
+
+You should receive the following response:
+
+```bash
+{"error":"Not Found"}
+```
+
+### Local development
+
+It is also possible to emulate API Gateway and Lambda locally by using `serverless-offline` plugin. In order to do that, execute the following command:
+
+```bash
+serverless plugin install -n serverless-offline
+```
+
+It will add the `serverless-offline` plugin to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`.
+
+After installation, you can start local emulation with:
+
+```
+serverless offline
+```
+
+To learn more about the capabilities of `serverless-offline`, please refer to its [GitHub repository](https://github.com/dherault/serverless-offline).
